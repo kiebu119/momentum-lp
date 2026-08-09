@@ -4,6 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>無料体験のご予約 | MOMENTUM Fit Studio</title>
+<meta name="description" content="MOMENTUM Fit Studio の無料体験レッスン予約フォーム。30秒で完了・勧誘なし・託児のご希望も同時にお伝えいただけます。">
+<!-- OGP / SNSシェア -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MOMENTUM Fit Studio">
+<meta property="og:title" content="無料体験のご予約 | MOMENTUM Fit Studio">
+<meta property="og:description" content="託児スタッフ常駐・1回30分・手ぶらOK・日英バイリンガル対応の女性専用パーソナルジム（Torrance, CA）。無料体験受付中。">
+<meta property="og:url" content="https://kiebu119.github.io/momentum-lp/reserve.html">
+<meta property="og:image" content="https://kiebu119.github.io/momentum-lp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Book your free trial | MOMENTUM Fit Studio">
+<meta name="twitter:description" content="Women-only personal training with childcare on site. 30-minute sessions, bilingual support. Torrance, CA.">
+<meta name="twitter:image" content="https://kiebu119.github.io/momentum-lp/ogp.png">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -88,12 +104,23 @@ input.ng{border-color:var(--coral);background:#FDF3F0;}
 .kids-note b{color:#5F7A5C;}
 
 .submit{
+  position:relative;overflow:hidden;
   display:block;width:100%;border:none;cursor:pointer;font-family:inherit;
   background:linear-gradient(180deg,var(--coral),var(--coral-d));color:#fff;
   font-weight:900;font-size:17px;padding:19px 12px;border-radius:40px;
-  box-shadow:0 5px 0 #A8462F;transition:.15s;margin-top:8px;
+  box-shadow:0 5px 0 #A8462F, 0 8px 20px rgba(217,108,87,.28);
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;margin-top:8px;
 }
-.submit:active{transform:translateY(3px);box-shadow:0 2px 0 #A8462F;}
+@media (hover:hover){
+  .submit:hover{transform:translateY(-2px);filter:brightness(1.06);
+    box-shadow:0 7px 0 #A8462F, 0 14px 30px rgba(217,108,87,.36);}
+  .submit::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);
+    transform:skewX(-18deg);transition:left .55s ease;}
+  .submit:hover::after{left:120%;}
+}
+.submit:active{transform:translateY(4px) scale(.99);box-shadow:0 1px 0 #A8462F, 0 3px 10px rgba(217,108,87,.3);}
+.submit:focus-visible{outline:3px solid var(--sage);outline-offset:3px;}
 .priv{font-size:11.5px;color:var(--grey);text-align:center;margin-top:16px;line-height:1.7;}
 
 .alt{margin-top:32px;text-align:center;}
@@ -101,7 +128,9 @@ input.ng{border-color:var(--coral);background:#FDF3F0;}
 .alt a{
   display:inline-block;border:2px solid var(--sage);color:#5F7A5C;font-weight:800;font-size:14px;
   padding:13px 30px;border-radius:40px;background:var(--white);
+  transition:background .2s ease,color .2s ease,transform .2s ease;
 }
+.alt a:hover{background:var(--sage);color:#fff;transform:translateY(-2px);}
 .back{display:block;text-align:center;margin-top:36px;font-size:13px;color:var(--grey);}
 
 /* thanks */
