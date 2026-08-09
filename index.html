@@ -161,7 +161,7 @@ h2 .ac{color:var(--coral);}
 /* ---------- solution ---------- */
 .solution{background:linear-gradient(180deg,var(--pink-l),var(--cream));}
 .sol-main{border-radius:18px;overflow:hidden;margin-bottom:14px;}
-.sol-main img{width:100%;aspect-ratio:16/11;object-fit:cover;}
+.sol-main img,.sol-main video{width:100%;aspect-ratio:16/11;object-fit:cover;display:block;}
 .sol-sub{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:var(--sp-m);}
 .sol-sub img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:16px;}
 
@@ -330,7 +330,7 @@ footer .f-logo .mom{color:var(--coral);}
 
   .sol-flex{display:grid;grid-template-columns:1.15fr 1fr;gap:24px;align-items:start;}
   .sol-main{margin-bottom:0;}
-  .sol-main img{aspect-ratio:3/4;height:100%;}
+  .sol-main img,.sol-main video{aspect-ratio:3/4;height:100%;}
   .sol-sub{grid-template-columns:1fr;gap:24px;margin-bottom:0;}
   .sol-sub img{aspect-ratio:16/10;}
   .lead{margin-top:var(--sp-m);text-align:center;font-size:17px;}
@@ -454,7 +454,9 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="jp rv">預けて、30分。<br><span class="ac">それだけでいい</span>ジムです</h2>
     <h2 class="en rv">Drop off your kids.<br><span class="ac">Train for 30 minutes.</span><br>That's all it takes.</h2>
     <div class="sol-flex">
-      <div class="sol-main rv"><img src="solution.png" alt="スタジオ全景"></div>
+      <div class="sol-main rv">
+        <video src="solution.mp4" autoplay muted loop playsinline poster="solution.png"></video>
+      </div>
       <div class="sol-sub">
         <img class="rv" src="solution_sub1.png" alt="キッズスペース">
         <img class="rv" src="solution_sub2.png" alt="トレーニング風景">
