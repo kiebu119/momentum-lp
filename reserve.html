@@ -345,6 +345,21 @@ function validateSlot(n){
   return true;
 }
 
+/* ---- Googleスプレッドシート連携（Apps ScriptのURLを入れると有効になる） ---- */
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzAahvnyAuEaxADIC2qok4ykepV1kj2XWGKBMcXqCeXuxWoUu6EXGoZXM9wigWA1Fj6/exec';
+
+function sendToSheet(form){
+  if(!GAS_URL) return Promise.resolve();           // 未設定ならスキップ（デモ動作）
+  var data={};
+  new FormData(form).forEach(function(v,k){ data[k]=v; });
+  return fetch(GAS_URL,{
+    method:'POST',
+    mode:'no-cors',                                 // GAS向け：CORSを回避
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify(data)
+  }).catch(function(){ /* 送信失敗でも画面は進める */ });
+}
+
 document.getElementById('form').addEventListener('submit',function(e){
   e.preventDefault();
   var jp=document.body.classList.contains('lang-jp');
@@ -365,7 +380,7 @@ document.getElementById('form').addEventListener('submit',function(e){
     document.querySelector('.err.on').scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
-  // デモのため送信はせず完了表示に切り替え
+  sendToSheet(this);
   this.style.display='none';
   document.getElementById('thanks').classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
