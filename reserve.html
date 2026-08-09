@@ -121,6 +121,26 @@ input.ng{border-color:var(--coral);background:#FDF3F0;}
 }
 .submit:active{transform:translateY(4px) scale(.99);box-shadow:0 1px 0 #A8462F, 0 3px 10px rgba(217,108,87,.3);}
 .submit:focus-visible{outline:3px solid var(--sage);outline-offset:3px;}
+.send-err{
+  display:none;background:#FDF0EC;border:1.5px solid var(--coral);border-radius:12px;
+  color:#A8462F;font-size:13px;font-weight:700;line-height:1.75;padding:14px 16px;margin-top:16px;
+}
+.send-err.on{display:block;}
+.submit.sending{filter:grayscale(.25) brightness(.95);cursor:progress;animation:none;}
+.submit:disabled{opacity:.85;}
+.line-demo{
+  position:relative;font-family:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;gap:10px;
+  border:2px dashed var(--sage);color:#5F7A5C;font-weight:800;font-size:14px;
+  padding:13px 26px;border-radius:40px;background:var(--white);
+  transition:background .2s ease,color .2s ease;
+}
+.line-demo em{
+  font-style:normal;font-size:10px;font-weight:800;letter-spacing:.1em;
+  background:var(--sage);color:#fff;padding:2px 8px;border-radius:10px;
+}
+.line-demo:hover{background:var(--sage-l);}
+.demo-note{font-size:11.5px;color:var(--grey);margin-top:12px;line-height:1.7;}
 .priv{font-size:11.5px;color:var(--grey);text-align:center;margin-top:16px;line-height:1.7;}
 
 .alt{margin-top:32px;text-align:center;}
@@ -237,10 +257,8 @@ footer .f-logo .mom{color:var(--coral);}
     <div class="fld">
       <label for="prog"><span class="jp">ご希望のプログラム</span><span class="en">Program of interest</span><span class="opt">任意</span></label>
       <select id="prog" name="program">
-        <option value="">
-          <span class="jp">選択してください</span>
-        </option>
-        <option value="bodymake"><span class="jp">ボディメイク30</span></option>
+        <option value="">選択してください / Please select</option>
+        <option value="bodymake">ボディメイク30 / Body Make 30</option>
         <option value="postpartum">産後リカバリー / Postpartum Recovery</option>
         <option value="stretch">リフレッシュストレッチ / Refresh Stretch</option>
         <option value="consult">相談して決めたい / I'd like advice</option>
@@ -264,6 +282,7 @@ footer .f-logo .mom{color:var(--coral);}
     </div>
 
     <button type="submit" class="submit"><span class="jp">無料体験を予約する</span><span class="en">Book My Free Trial</span></button>
+    <p class="send-err" id="sendErr" role="alert" aria-live="polite"></p>
     <p class="priv jp">ご入力いただいた情報は、ご予約のご連絡以外には使用しません。<br>キャンセル料は一切かかりません。</p>
     <p class="priv en">Your information is used only to confirm your booking.<br>No cancellation fees, ever.</p>
   </form>
@@ -279,7 +298,14 @@ footer .f-logo .mom{color:var(--coral);}
   <div class="alt">
     <p class="jp">LINEでのご予約・ご相談も承っています</p>
     <p class="en">You can also book or ask questions on LINE</p>
-    <a href="#"><span class="jp">LINEで相談する</span><span class="en">Chat on LINE</span></a>
+    <button type="button" class="line-demo" id="lineBtn" aria-describedby="lineNote">
+      <span class="jp">LINEで相談する</span><span class="en">Chat on LINE</span>
+      <em>DEMO</em>
+    </button>
+    <p class="demo-note" id="lineNote">
+      <span class="jp">※本ページは架空スタジオのデモです。LINEアカウントは設定していません。</span>
+      <span class="en">*This is a demo for a fictional studio — no LINE account is connected.</span>
+    </p>
   </div>
 
   <a href="index.html" class="back"><span class="jp">← サービス内容をもう一度見る</span><span class="en">← Back to the studio page</span></a>
@@ -299,9 +325,7 @@ function setLang(l){
   bjp.classList.toggle('on',l==='jp');
   ben.classList.toggle('on',l==='en');
   try{localStorage.setItem('mm_lang',l);}catch(e){}
-  // selectの初期表示ラベルを言語に合わせる
-  var o=document.querySelector('#prog option[value=""]');
-  if(o) o.textContent=(l==='jp')?'選択してください':'Please select';
+  // プログラムselectは日英併記なので書き換え不要
   // 時間枠のラベルも言語に追従（選択済みの値は保持）
   if(typeof buildSlots==='function'){
     ['1','2'].forEach(function(n){
@@ -383,16 +407,28 @@ function validateSlot(n){
 /* ---- Googleスプレッドシート連携（Apps ScriptのURLを入れると有効になる） ---- */
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbzAahvnyAuEaxADIC2qok4ykepV1kj2XWGKBMcXqCeXuxWoUu6EXGoZXM9wigWA1Fj6/exec';
 
+/* 送信：成功/失敗を判定できるようにする（Content-Type: text/plain でプリフライト回避） */
 function sendToSheet(form){
-  if(!GAS_URL) return Promise.resolve();           // 未設定ならスキップ（デモ動作）
+  if(!GAS_URL) return Promise.resolve({result:'ok', demo:true}); // 未設定時はデモ動作
   var data={};
   new FormData(form).forEach(function(v,k){ data[k]=v; });
+
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, 15000); // 15秒でタイムアウト
+
   return fetch(GAS_URL,{
     method:'POST',
-    mode:'no-cors',                                 // GAS向け：CORSを回避
     headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify(data)
-  }).catch(function(){ /* 送信失敗でも画面は進める */ });
+    body:JSON.stringify(data),
+    signal:ctrl.signal
+  }).then(function(res){
+    clearTimeout(timer);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    return res.json();
+  }).then(function(json){
+    if(json && json.result==='ok') return json;
+    throw new Error((json && json.message) || 'unknown error');
+  });
 }
 
 document.getElementById('form').addEventListener('submit',function(e){
@@ -415,10 +451,35 @@ document.getElementById('form').addEventListener('submit',function(e){
     document.querySelector('.err.on').scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
-  sendToSheet(this);
-  this.style.display='none';
-  document.getElementById('thanks').classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
+  // 送信中の状態にする（二重送信防止）
+  var form=this, btn=form.querySelector('.submit');
+  var label=btn.innerHTML;
+  btn.disabled=true; btn.classList.add('sending');
+  btn.innerHTML = jp ? '送信中…' : 'Sending…';
+  var box=document.getElementById('sendErr');
+  box.classList.remove('on'); box.textContent='';
+
+  sendToSheet(form).then(function(){
+    form.style.display='none';
+    document.getElementById('thanks').classList.add('on');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }).catch(function(err){
+    btn.disabled=false; btn.classList.remove('sending'); btn.innerHTML=label;
+    box.textContent = jp
+      ? '送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。何度も失敗する場合はお電話またはLINEでご連絡ください。'
+      : 'Sending failed. Please check your connection and try again. If it keeps failing, please contact us by phone or LINE.';
+    box.classList.add('on');
+    box.scrollIntoView({behavior:'smooth',block:'center'});
+    console.error('[reserve] submit failed:', err);
+  });
+});
+
+/* LINEボタン：架空サイトのためデモ表示 */
+document.getElementById('lineBtn').addEventListener('click',function(){
+  var jp=document.body.classList.contains('lang-jp');
+  alert(jp
+    ? '※本ページはデザイン学習用の架空サイトです。\nLINEアカウントは設定していません。'
+    : '*This is a fictional site created for design study.\nNo LINE account is connected.');
 });
 </script>
 </body>
