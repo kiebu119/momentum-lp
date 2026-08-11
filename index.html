@@ -70,6 +70,9 @@ a{text-decoration:none;color:inherit;}
 .hero-media{position:absolute;inset:0;z-index:0;background:var(--cream);}
 .hero-media img,.hero-media video{width:100%;height:100%;object-fit:cover;}
 .hero-media img{animation:kb 22s ease-in-out infinite alternate;}
+/* FV：2本の動画をクロスフェードで交互に */
+.hero-media .hv{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;}
+.hero-media .hv.on{opacity:1;}
 /* SP / PC メディア出し分け */
 .pc-media{display:none;}
 .sp-media{display:block;}
@@ -161,7 +164,7 @@ h2 .ac{color:var(--coral);}
 /* ---------- solution ---------- */
 .solution{background:linear-gradient(180deg,var(--pink-l),var(--cream));}
 .sol-main{border-radius:18px;overflow:hidden;margin-bottom:14px;}
-.sol-main img{width:100%;aspect-ratio:16/11;object-fit:cover;}
+.sol-main img,.sol-main video{width:100%;aspect-ratio:16/11;object-fit:cover;display:block;}
 .sol-sub{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:var(--sp-m);}
 .sol-sub img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:16px;}
 
@@ -338,7 +341,7 @@ footer .f-logo .mom{color:var(--coral);}
 
   .sol-flex{display:grid;grid-template-columns:1.15fr 1fr;gap:24px;align-items:start;}
   .sol-main{margin-bottom:0;}
-  .sol-main img{aspect-ratio:3/4;height:100%;}
+  .sol-main img,.sol-main video{aspect-ratio:3/4;height:100%;}
   .sol-sub{grid-template-columns:1fr;gap:24px;margin-bottom:0;}
   .sol-sub img{aspect-ratio:16/10;}
   .lead{margin-top:var(--sp-m);text-align:center;font-size:17px;}
@@ -404,13 +407,11 @@ footer .f-logo .mom{color:var(--coral);}
 <!-- ============ HERO ============ -->
 <header class="hero">
   <div class="hero-media">
-    <!-- SP: 縦動画 / PC: 横動画 を出し分け。動画が読めない環境では静止画にフォールバック -->
-    <video class="sp-media" autoplay muted loop playsinline preload="auto" poster="05_素材/hero.png">
-      <source src="04_REEL/cut4_training.mp4" type="video/mp4">
-    </video>
-    <video class="pc-media" autoplay muted loop playsinline preload="auto" poster="05_素材/hero.png">
-      <source src="04_REEL/hero_wide.mp4" type="video/mp4">
-    </video>
+    <!-- SP: 縦動画 / PC: 横動画。2本を交互に再生（トレーニング → キッズスペース） -->
+    <video class="sp-media hv on" data-i="0" autoplay muted loop playsinline preload="auto" poster="hero.png" src="cut4_training.mp4"></video>
+    <video class="sp-media hv"    data-i="1" muted loop playsinline preload="none" poster="hero.png" data-src="kids_sp.mp4"></video>
+    <video class="pc-media hv on" data-i="0" autoplay muted loop playsinline preload="auto" poster="hero.png" src="hero_wide.mp4"></video>
+    <video class="pc-media hv"    data-i="1" muted loop playsinline preload="none" poster="hero.png" data-src="kids_wide.mp4"></video>
   </div>
   <div class="hero-inner">
     <div class="hero-copy">
@@ -445,10 +446,10 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="jp rv">こんなふうに、<br>あきらめていませんか</h2>
     <h2 class="en rv">Sound familiar?</h2>
     <div class="worry-grid">
-      <div class="worry rv"><img loading="lazy" decoding="async" src="05_素材/worry1.png" alt=""><p class="jp">子どもを預けられない</p><p class="en">"No one to watch my kids."</p></div>
-      <div class="worry rv"><img loading="lazy" decoding="async" src="05_素材/worry2.png" alt=""><p class="jp">1時間の運動なんて無理</p><p class="en">"I can't spare a whole hour."</p></div>
-      <div class="worry rv"><img loading="lazy" decoding="async" src="05_素材/worry3.png" alt=""><p class="jp">産後の体型、人目が気になる</p><p class="en">"I feel self-conscious at the gym."</p></div>
-      <div class="worry rv"><img loading="lazy" decoding="async" src="05_素材/worry4.png" alt=""><p class="jp">英語だけのジムは不安</p><p class="en">"Big-box gyms feel overwhelming."</p></div>
+      <div class="worry rv"><img loading="lazy" decoding="async" src="worry1.png" alt=""><p class="jp">子どもを預けられない</p><p class="en">"No one to watch my kids."</p></div>
+      <div class="worry rv"><img loading="lazy" decoding="async" src="worry2.png" alt=""><p class="jp">1時間の運動なんて無理</p><p class="en">"I can't spare a whole hour."</p></div>
+      <div class="worry rv"><img loading="lazy" decoding="async" src="worry3.png" alt=""><p class="jp">産後の体型、人目が気になる</p><p class="en">"I feel self-conscious at the gym."</p></div>
+      <div class="worry rv"><img loading="lazy" decoding="async" src="worry4.png" alt=""><p class="jp">英語だけのジムは不安</p><p class="en">"Big-box gyms feel overwhelming."</p></div>
     </div>
     <p class="worry-close rv jp">その「行けない理由」、<br><span class="ac">ぜんぶ、なくしました。</span></p>
     <p class="worry-close rv en">Every reason you "can't go" —<br><span class="ac">we removed them all.</span></p>
@@ -462,10 +463,12 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="jp rv">預けて、30分。<br><span class="ac">それだけでいい</span>ジムです</h2>
     <h2 class="en rv">Drop off your kids.<br><span class="ac">Train for 30 minutes.</span><br>That's all it takes.</h2>
     <div class="sol-flex">
-      <div class="sol-main rv"><img loading="lazy" decoding="async" src="05_素材/solution.png" alt="スタジオ全景 / Inside the studio"></div>
+      <div class="sol-main rv">
+        <video class="lazy-vid" data-src="solution.mp4" autoplay muted loop playsinline preload="none" poster="solution.png"></video>
+      </div>
       <div class="sol-sub">
-        <img loading="lazy" decoding="async" class="rv" src="05_素材/solution_sub1.png" alt="ガラス張りのキッズスペース / Glass-walled kids space">
-        <img loading="lazy" decoding="async" class="rv" src="05_素材/solution_sub2.png" alt="トレーニング風景 / A training session">
+        <img loading="lazy" decoding="async" class="rv" src="solution_sub1.png" alt="ガラス張りのキッズスペース / Glass-walled kids space">
+        <img loading="lazy" decoding="async" class="rv" src="solution_sub2.png" alt="トレーニング風景 / A training session">
       </div>
     </div>
     <p class="lead rv jp">MOMENTUMは、託児スタッフが常駐する女性専用パーソナルジム。お子さまはガラス越しに見えるキッズスペースへ。あなたはトレーナーと、30分だけ自分に集中。ウェアもシューズも無料レンタルだから、手ぶらで通えます。</p>
@@ -481,28 +484,28 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="en rv">Why women <span class="ac">choose MOMENTUM</span></h2>
     <div class="reason-grid">
       <div class="reason rv">
-        <img loading="lazy" decoding="async" src="05_素材/reason1.png" alt="">
+        <img loading="lazy" decoding="async" src="reason1.png" alt="">
         <div><div class="no">REASON 01</div>
           <h3 class="jp">託児スタッフ常駐</h3><h3 class="en">Childcare staff on site</h3>
           <p class="jp">生後6ヶ月〜／ガラス張り／追加料金なし</p>
           <p class="en">From 6 months old · glass-walled · no extra charge</p></div>
       </div>
       <div class="reason rv">
-        <img loading="lazy" decoding="async" src="05_素材/reason2.png" alt="">
+        <img loading="lazy" decoding="async" src="reason2.png" alt="">
         <div><div class="no">REASON 02</div>
           <h3 class="jp">30分完結&手ぶらOK</h3><h3 class="en">30 min, come empty-handed</h3>
           <p class="jp">ウェア・シューズ・タオル無料レンタル</p>
           <p class="en">Free rental wear, shoes and towels</p></div>
       </div>
       <div class="reason rv">
-        <img loading="lazy" decoding="async" src="05_素材/reason3.png" alt="">
+        <img loading="lazy" decoding="async" src="reason3.png" alt="">
         <div><div class="no">REASON 03</div>
           <h3 class="jp">女性専用×マンツーマン</h3><h3 class="en">Women-only, one-on-one</h3>
           <p class="jp">産後ケアに詳しい女性トレーナーのみ</p>
           <p class="en">Trainers trained in postpartum care</p></div>
       </div>
       <div class="reason rv">
-        <img loading="lazy" decoding="async" src="05_素材/reason4.png" alt="">
+        <img loading="lazy" decoding="async" src="reason4.png" alt="">
         <div><div class="no">REASON 04</div>
           <h3 class="jp">日本語OK・English OK</h3><h3 class="en">日本語OK · English OK</h3>
           <p class="jp">カウンセリングから日本語・英語対応OK</p>
@@ -519,11 +522,11 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="jp rv">あなたを担当する<span class="ac">トレーナー</span></h2>
     <h2 class="en rv">Meet your <span class="ac">trainers</span></h2>
     <div class="grid3">
-      <div class="card rv"><img loading="lazy" decoding="async" src="05_素材/trainer_aya.png" alt="トレーナー AYA / Trainer AYA">
+      <div class="card rv"><img loading="lazy" decoding="async" src="trainer_aya.png" alt="トレーナー AYA / Trainer AYA">
         <h3>AYA</h3><p class="jp">NSCA-CPT／ボディメイク</p><p class="en">NSCA-CPT ／ Body make</p></div>
-      <div class="card rv"><img loading="lazy" decoding="async" src="05_素材/trainer_megumi.png" alt="トレーナー MEGUMI / Trainer MEGUMI">
+      <div class="card rv"><img loading="lazy" decoding="async" src="trainer_megumi.png" alt="トレーナー MEGUMI / Trainer MEGUMI">
         <h3>MEGUMI</h3><p class="jp">産後ケア指導士</p><p class="en">Postpartum care specialist</p></div>
-      <div class="card rv"><img loading="lazy" decoding="async" src="05_素材/trainer_sarah.png" alt="トレーナー SARAH / Trainer SARAH">
+      <div class="card rv"><img loading="lazy" decoding="async" src="trainer_sarah.png" alt="トレーナー SARAH / Trainer SARAH">
         <h3>SARAH</h3><p class="jp">NSCA-CPT</p><p class="en">NSCA-CPT</p><span class="chip">English OK</span></div>
     </div>
   </div>
@@ -536,15 +539,15 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="jp rv">目的に合わせて選べる<br><span class="ac">3つのプログラム</span></h2>
     <h2 class="en rv">Three programs<br><span class="ac">for your goals</span></h2>
     <div class="grid3">
-      <div class="card rv"><img loading="lazy" decoding="async" src="05_素材/program1.png" alt="">
+      <div class="card rv"><img loading="lazy" decoding="async" src="program1.png" alt="">
         <h3 class="jp">ボディメイク30</h3><h3 class="en">Body Make 30</h3>
         <p class="jp">引き締めたい方へ。30分集中トレーニング</p>
         <p class="en">Tone up with a focused 30-min session</p></div>
-      <div class="card rv"><img loading="lazy" decoding="async" src="05_素材/program2.png" alt="">
+      <div class="card rv"><img loading="lazy" decoding="async" src="program2.png" alt="">
         <h3 class="jp">産後リカバリー</h3><h3 class="en">Postpartum Recovery</h3>
         <p class="jp">骨盤まわり・体幹をやさしく整える</p>
         <p class="en">Gentle core and pelvic-floor work</p></div>
-      <div class="card rv"><img loading="lazy" decoding="async" src="05_素材/program3.png" alt="">
+      <div class="card rv"><img loading="lazy" decoding="async" src="program3.png" alt="">
         <h3 class="jp">リフレッシュ<br>ストレッチ</h3><h3 class="en">Refresh Stretch</h3>
         <p class="jp">肩こり・腰の重さに。呼吸から整える</p>
         <p class="en">For desk-work stiffness — stretch &amp; breathe</p></div>
@@ -560,12 +563,12 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="en rv">Bright, clean, <span class="ac">easy to walk into</span></h2>
     <!-- 動画に差し替えるときは各 .slide の <img> を <video autoplay muted loop playsinline> に置き換え -->
     <div class="slider" id="slider" role="group" aria-label="スタジオ内の写真 / Photos inside the studio">
-      <div class="slide on"><img loading="lazy" decoding="async" src="05_素材/reception.png" alt=""><span class="jp">受付</span><span class="en">Reception</span></div>
-      <div class="slide"><img loading="lazy" decoding="async" src="05_素材/training.png" alt=""><span class="jp">マシンエリア</span><span class="en">Training Area</span></div>
-      <div class="slide"><img loading="lazy" decoding="async" src="05_素材/solution_sub1.png" alt=""><span class="jp">キッズスペース</span><span class="en">Kids Space</span></div>
-      <div class="slide"><img loading="lazy" decoding="async" src="05_素材/powder.png" alt=""><span class="jp">パウダールーム</span><span class="en">Powder Room</span></div>
-      <div class="slide"><img loading="lazy" decoding="async" src="05_素材/shower.png" alt=""><span class="jp">シャワー</span><span class="en">Shower</span></div>
-      <div class="slide"><img loading="lazy" decoding="async" src="05_素材/rental.png" alt=""><span class="jp">レンタルウェア</span><span class="en">Rental Wear</span></div>
+      <div class="slide on"><img loading="lazy" decoding="async" src="reception.png" alt="受付 / Reception"><span class="jp">受付</span><span class="en">Reception</span></div>
+      <div class="slide"><img loading="lazy" decoding="async" src="training.png" alt="マシンエリア / Training area"><span class="jp">マシンエリア</span><span class="en">Training Area</span></div>
+      <div class="slide"><img loading="lazy" decoding="async" src="solution_sub1.png" alt="キッズスペース / Kids space"><span class="jp">キッズスペース</span><span class="en">Kids Space</span></div>
+      <div class="slide"><img loading="lazy" decoding="async" src="powder.png" alt="パウダールーム / Powder room"><span class="jp">パウダールーム</span><span class="en">Powder Room</span></div>
+      <div class="slide"><img loading="lazy" decoding="async" src="shower.png" alt="シャワールーム / Shower room"><span class="jp">シャワー</span><span class="en">Shower</span></div>
+      <div class="slide"><img loading="lazy" decoding="async" src="rental.png" alt="レンタルウェア / Rental wear"><span class="jp">レンタルウェア</span><span class="en">Rental Wear</span></div>
     </div>
     <div class="dots" id="dots"></div>
   </div>
@@ -579,7 +582,7 @@ footer .f-logo .mom{color:var(--coral);}
     <h2 class="en rv">What our <span class="ac">members say</span></h2>
     <div class="voice-grid">
       <div class="voice rv">
-        <div class="voice-hd"><img loading="lazy" decoding="async" src="05_素材/voice1.png" alt="">
+        <div class="voice-hd"><img loading="lazy" decoding="async" src="voice1.png" alt="">
           <div class="voice-nm"><span class="jp">M.Kさん</span><span class="en">M.K</span>
             <small class="jp">34歳・1歳児ママ</small><small class="en">34, mom of 1</small></div>
           <div class="stars">★★★★★</div></div>
@@ -587,7 +590,7 @@ footer .f-logo .mom{color:var(--coral);}
         <p class="en">"The first gym I've found where I can bring my child. Thirty minutes fits into my lunch break — my body and my mood feel lighter."</p>
       </div>
       <div class="voice rv">
-        <div class="voice-hd"><img loading="lazy" decoding="async" src="05_素材/voice2.png" alt="">
+        <div class="voice-hd"><img loading="lazy" decoding="async" src="voice2.png" alt="">
           <div class="voice-nm"><span class="jp">Sarahさん</span><span class="en">Sarah</span>
             <small class="jp">29歳・英語教師</small><small class="en">29, English teacher</small></div>
           <div class="stars">★★★★★</div></div>
@@ -595,7 +598,7 @@ footer .f-logo .mom{color:var(--coral);}
         <p class="en">"Having a trainer I can talk to in English changed everything. The women-only space makes it so easy to focus."</p>
       </div>
       <div class="voice rv">
-        <div class="voice-hd"><img loading="lazy" decoding="async" src="05_素材/voice3.png" alt="">
+        <div class="voice-hd"><img loading="lazy" decoding="async" src="voice3.png" alt="">
           <div class="voice-nm"><span class="jp">R.Tさん</span><span class="en">R.T</span>
             <small class="jp">41歳・2児のママ</small><small class="en">41, mom of 2</small></div>
           <div class="stars">★★★★★</div></div>
@@ -770,12 +773,8 @@ footer .f-logo .mom{color:var(--coral);}
 <!-- ============ CLOSING ============ -->
 <section class="closing" id="reserve">
   <div class="closing-media">
-    <video class="sp-media" autoplay muted loop playsinline preload="auto" poster="05_素材/closing.png">
-      <source src="04_REEL/cut5_hug.mp4" type="video/mp4">
-    </video>
-    <video class="pc-media" autoplay muted loop playsinline preload="auto" poster="05_素材/closing.png">
-      <source src="04_REEL/closing_wide.mp4" type="video/mp4">
-    </video>
+    <video class="sp-media lazy-vid" data-src="cut5_hug.mp4" autoplay muted loop playsinline preload="none" poster="closing.png"></video>
+    <video class="pc-media lazy-vid" data-src="closing_wide.mp4" autoplay muted loop playsinline preload="none" poster="closing.png"></video>
   </div>
   <div class="closing-in">
     <div class="closing-copy">
@@ -846,6 +845,47 @@ function go(n){
 function next(){ go((idx+1) % slides.length); }
 function reset(){ clearInterval(timer); timer = setInterval(next, 4500); }
 reset();
+
+/* ---- 動画の遅延読み込み（表示直前に読み込む＝初回表示を軽くする） ---- */
+var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var vidIO = new IntersectionObserver(function(es){
+  es.forEach(function(e){
+    if(!e.isIntersecting) return;
+    var v=e.target, src=v.dataset.src;
+    if(src && !v.src){ v.src=src; v.load(); }
+    if(!reduce){ v.play().catch(function(){}); }
+    vidIO.unobserve(v);
+  });
+},{rootMargin:'300px 0px'});
+document.querySelectorAll('.lazy-vid').forEach(function(v){ vidIO.observe(v); });
+
+/* 動きを減らす設定なら自動再生を止めて1コマ目で静止 */
+if(reduce){
+  document.querySelectorAll('video').forEach(function(v){ v.autoplay=false; v.pause(); });
+}
+
+
+/* ---- FVの動画を交互に切り替え（約6秒ごとにクロスフェード） ---- */
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var idx=0;
+  function group(){ // 画面幅に応じて今見えている方のセットを取得
+    var pc = window.matchMedia('(min-width:900px)').matches;
+    return Array.prototype.filter.call(
+      document.querySelectorAll('.hero-media .hv'),
+      function(v){ return pc ? v.classList.contains('pc-media') : v.classList.contains('sp-media'); });
+  }
+  setInterval(function(){
+    var g=group(); if(g.length<2) return;
+    var cur=g[idx%2], nxt=g[(idx+1)%2];
+    if(nxt.dataset.src && !nxt.src){ nxt.src=nxt.dataset.src; nxt.load(); }
+    nxt.currentTime=0;
+    nxt.play().catch(function(){});
+    nxt.classList.add('on'); cur.classList.remove('on');
+    setTimeout(function(){ cur.pause(); }, 1200);
+    idx++;
+  }, 6000);
+})();
 
 /* ---- fixed cta ---- */
 var fixed = document.getElementById('fixed');
